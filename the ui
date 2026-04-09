@@ -13,181 +13,122 @@ local ARSIN = {}
 ARSIN.__index = ARSIN
 
 local CoreGui = game:GetService("CoreGui")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-
-local Theme = {
-    Main = Color3.fromRGB(240, 240, 240),     
-    Header = Color3.fromRGB(215, 215, 215),    
-    Content = Color3.fromRGB(225, 225, 225),  
-    Instructions = Color3.fromRGB(205, 205, 205),
-    Text = Color3.fromRGB(50, 50, 50),        
-    ButtonText = Color3.fromRGB(70, 70, 70),   
-    UniqueButton1 = Color3.fromRGB(180, 180, 180), 
-    UniqueButton2 = Color3.fromRGB(205, 205, 205), 
-}
 
 function ARSIN.new()
     local self = setmetatable({}, ARSIN)
-    if CoreGui:FindFirstChild("ARSIN_CORE") then CoreGui.ARSIN_CORE:Destroy() end
+    if CoreGui:FindFirstChild("ARSIN_RAYZ") then CoreGui.ARSIN_RAYZ:Destroy() end
     self.Screen = Instance.new("ScreenGui", CoreGui)
-    self.Screen.Name = "ARSIN_CORE"
-    self.Screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    self.Screen.Name = "ARSIN_RAYZ"
     return self
 end
 
 function ARSIN:Window(title)
     local Main = Instance.new("Frame", self.Screen)
-    Main.Size = UDim2.fromOffset(560, 420)
-    Main.Position = UDim2.new(0.5, -280, 0.5, -210)
-    Main.BackgroundColor3 = Theme.Main
+    Main.Size = UDim2.fromOffset(520, 380)
+    Main.Position = UDim2.new(0.5, -260, 0.5, -190)
+    Main.BackgroundColor3 = Color3.fromRGB(245, 245, 245) -- Light background
     Main.BorderSizePixel = 0
-    Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 6)
-
-    local Shadow = Instance.new("ImageLabel", Main)
-    Shadow.Name = "Shadow"
-    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
-    Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Shadow.Size = UDim2.new(1, 40, 1, 40)
-    Shadow.BackgroundTransparency = 1
-    Shadow.Image = "rbxassetid://6015667341"
-    Shadow.ImageColor3 = Color3.new(0,0,0)
-    Shadow.ImageTransparency = 0.5
-
-    local dragging, dragInput, dragStart, startPos
-    Main.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true; dragStart = input.Position; startPos = Main.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+    Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
 
     local Topbar = Instance.new("Frame", Main)
-    Topbar.Size = UDim2.new(1, -20, 0, 40)
-    Topbar.Position = UDim2.fromOffset(10, 10)
-    Topbar.BackgroundColor3 = Theme.Header
-    Topbar.BorderSizePixel = 0
-    Instance.new("UICorner", Topbar).CornerRadius = UDim.new(0, 6)
+    Topbar.Size = UDim2.new(1, -24, 0, 32)
+    Topbar.Position = UDim2.fromOffset(12, 12)
+    Topbar.BackgroundColor3 = Color3.fromRGB(210, 215, 218) -- Rayz gray
+    Instance.new("UICorner", Topbar).CornerRadius = UDim.new(0, 8)
 
     local Title = Instance.new("TextLabel", Topbar)
-    Title.Size = UDim2.new(0.5, -10, 1, 0)
-    Title.Position = UDim2.fromOffset(10, 0)
-    Title.Text = title:upper()
-    Title.TextColor3 = Theme.Text
-    Title.Font = Enum.Font.GothamBold
-    Title.TextSize = 14
+    Title.Size = UDim2.new(1, -10, 1, 0)
+    Title.Position = UDim2.fromOffset(12, 0)
+    Title.Text = title
+    Title.Font = Enum.Font.Gotham
+    Title.TextSize = 15
+    Title.TextColor3 = Color3.fromRGB(50, 55, 60)
+    Title.TextXAlignment = 0
     Title.BackgroundTransparency = 1
-    Title.TextXAlignment = Enum.TextXAlignment.Left
 
     local Container = Instance.new("Frame", Main)
-    Container.Size = UDim2.new(1, -145, 1, -70)
-    Container.Position = UDim2.fromOffset(10, 60)
-    Container.BackgroundColor3 = Theme.Content
-    Container.BorderSizePixel = 0
-    Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 6)
+    Container.Size = UDim2.new(0, 380, 0, 310)
+    Container.Position = UDim2.fromOffset(12, 56)
+    Container.BackgroundColor3 = Color3.fromRGB(225, 228, 230) -- Panel gray
+    Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 12)
 
-    local Sidebar = Instance.new("ScrollingFrame", Main)
-    Sidebar.Size = UDim2.new(0, 110, 1, -70)
-    Sidebar.Position = UDim2.new(1, -120, 0, 60)
-    Sidebar.BackgroundTransparency = 1
-    Sidebar.ScrollBarThickness = 12 -- Visible Scrollbar from image 9.png
-    Sidebar.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 150)
-    Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 8)
+    local Sidebar = Instance.new("Frame", Main)
+    Sidebar.Size = UDim2.new(0, 104, 0, 310)
+    Sidebar.Position = UDim2.fromOffset(404, 56)
+    Sidebar.BackgroundColor3 = Color3.fromRGB(225, 228, 230)
+    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 12)
+
+    local TabList = Instance.new("UIListLayout", Sidebar)
+    TabList.Padding = UDim.new(0, 10)
+    TabList.HorizontalAlignment = 1
+    Instance.new("UIPadding", Sidebar).PaddingTop = UDim.new(0, 12)
 
     local Pages = {}
     local Methods = {}
 
     function Methods:Tab(name)
-        local Page = Instance.new("Frame", Container)
+        local Page = Instance.new("ScrollingFrame", Container)
         Page.Size = UDim2.new(1, -20, 1, -20)
         Page.Position = UDim2.fromOffset(10, 10)
         Page.Visible = false
         Page.BackgroundTransparency = 1
+        Page.ScrollBarThickness = 0
+        Instance.new("UIListLayout", Page).Padding = UDim.new(0, 10)
 
         local TabBtn = Instance.new("TextButton", Sidebar)
-        TabBtn.Size = UDim2.new(1, -15, 0, 32)
-        TabBtn.BackgroundColor3 = Theme.Header
-        TabBtn.Text = name:upper()
-        TabBtn.TextColor3 = Theme.Text
-        TabBtn.Font = Enum.Font.GothamSemibold
-        TabBtn.TextSize = 12
-        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 16)
-        
-        if name:lower() == "executer" then
-            TabBtn.TextXAlignment = Enum.TextXAlignment.Left
-            TabBtn.Position = UDim2.new(1, -15, 0, 32) -- Stack vertically, or adjust manually
-        end
+        TabBtn.Size = UDim2.new(0, 80, 0, 28)
+        TabBtn.BackgroundColor3 = Color3.fromRGB(205, 210, 212)
+        TabBtn.Text = name
+        TabBtn.Font = Enum.Font.Gotham
+        TabBtn.TextSize = 13
+        TabBtn.TextColor3 = Color3.fromRGB(50, 55, 60)
+        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(1, 0)
 
         TabBtn.MouseButton1Click:Connect(function()
-            for _, v in pairs(Pages) do v.p.Visible = false end
+            for _, v in pairs(Pages) do v.Visible = false end
             Page.Visible = true
         end)
 
-        Pages[name] = {p = Page}
-        if #Sidebar:GetChildren() == 2 then Page.Visible = true end -- First tab visible
+        Pages[name] = Page
+        if #Sidebar:GetChildren() == 2 then Page.Visible = true end
 
         local PageMethods = {}
-        
-        local ContentLayout = Instance.new("UIListLayout", Page)
-        ContentLayout.Padding = UDim.new(0, 10)
-        
+
         function PageMethods:Welcome(txt)
             local l = Instance.new("TextLabel", Page)
-            l.Size = UDim2.new(1, 0, 0, 40)
-            l.Text = txt:lower() .. "!"
-            l.TextColor3 = Theme.Text
+            l.Size = UDim2.new(1, 0, 0, 50)
+            l.Text = txt
             l.Font = Enum.Font.GothamMedium
-            l.TextSize = 36
+            l.TextSize = 48
+            l.TextColor3 = Color3.fromRGB(40, 50, 60)
             l.BackgroundTransparency = 1
-            l.TextXAlignment = Enum.TextXAlignment.Left
-        end
-        
-        function PageMethods:Instructions(txt)
-            local b = Instance.new("TextLabel", Page)
-            b.Size = UDim2.new(1, 0, 0, 30)
-            b.BackgroundColor3 = Theme.Instructions
-            b.Text = txt:lower()
-            b.TextColor3 = Theme.Text
-            b.Font = Enum.Font.GothamBook
-            b.TextSize = 14
-            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 4)
-            b.TextXAlignment = Enum.TextXAlignment.Left
-            -- Additional padding might be needed inside this label, or use a separate container
-            b.Position = UDim2.fromOffset(5, 0) 
+            l.TextXAlignment = 0
         end
 
-        local ButtonGrid = Instance.new("Frame", Page)
-        ButtonGrid.Size = UDim2.new(1, 0, 1, -100) -- Adjust size as needed
-        ButtonGrid.BackgroundTransparency = 1
-        
-        local Grid = Instance.new("UIGridLayout", ButtonGrid)
-        Grid.CellSize = UDim2.new(0.24, 0, 0.28, 0) -- 4 buttons per row (roughly) from image 9.png
-        Grid.CellPadding = UDim2.new(0.013, 0, 0.013, 0) -- Adjust padding for spacing
+        function PageMethods:Instructions(txt)
+            local l = Instance.new("TextLabel", Page)
+            l.Size = UDim2.new(1, 0, 0, 28)
+            l.BackgroundColor3 = Color3.fromRGB(205, 210, 212)
+            l.Text = "  " .. txt
+            l.Font = Enum.Font.Gotham
+            l.TextSize = 14
+            l.TextColor3 = Color3.fromRGB(50, 55, 60)
+            l.TextXAlignment = 0
+            Instance.new("UICorner", l).CornerRadius = UDim.new(0, 6)
+        end
 
         function PageMethods:Button(txt, cb)
-            local b = Instance.new("TextButton", ButtonGrid)
-            b.Size = UDim2.new(1, 0, 1, 0) -- Fill Cell
-            b.BackgroundColor3 = Theme.UniqueButton2 -- Default gray button
-            b.Text = txt:lower()
-            b.TextColor3 = Theme.ButtonText
-            b.Font = Enum.Font.GothamSemibold
-            b.TextSize = 12
-            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 4)
-
-            if txt:lower() == "infinite yield" or txt:lower() == "namless admin v2" then
-                b.BackgroundColor3 = Theme.UniqueButton1
-            elseif txt:lower() == "namless admin" then
-                b.Font = Enum.Font.GothamBold -- Bolder text
-            end
-
+            local b = Instance.new("TextButton", Page)
+            b.Size = UDim2.new(1, 0, 0, 35)
+            b.BackgroundColor3 = Color3.fromRGB(210, 215, 218)
+            b.Text = txt
+            b.Font = Enum.Font.Gotham
+            b.TextSize = 14
+            b.TextColor3 = Color3.fromRGB(50, 55, 60)
+            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
             b.MouseButton1Click:Connect(cb)
         end
+
         return PageMethods
     end
     return Methods

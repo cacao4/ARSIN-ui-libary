@@ -1,0 +1,105 @@
+-- [[ ARSIN UI LIBRARY SOURCE ]] --
+local ARSIN = {}
+ARSIN.__index = ARSIN
+
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+function ARSIN.new()
+    local self = setmetatable({}, ARSIN)
+    self.Screen = Instance.new("ScreenGui")
+    self.Screen.Name = "ARSIN_" .. math.random(100, 999)
+    self.Screen.Parent = CoreGui
+    return self
+end
+
+function ARSIN:Window(title, size)
+    local Window = Instance.new("Frame")
+    local UIStroke = Instance.new("UIStroke")
+    local TitleLabel = Instance.new("TextLabel")
+    local Content = Instance.new("ScrollingFrame")
+    local UIListLayout = Instance.new("UIListLayout")
+
+    Window.Size = UDim2.fromOffset(size.X, size.Y)
+    Window.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
+    Window.BackgroundColor3 = Color3.fromRGB(8, 8, 10)
+    Window.BorderSizePixel = 0
+    Window.Active = true
+    Window.Draggable = true
+    Window.Parent = self.Screen
+
+    UIStroke.Color = Color3.fromRGB(0, 150, 255) -- ARSIN Blue
+    UIStroke.Thickness = 1.8
+    UIStroke.Parent = Window
+
+    TitleLabel.Size = UDim2.new(1, 0, 0, 28)
+    TitleLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+    TitleLabel.Text = "  [ARSIN] // " .. title:upper()
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.Font = Enum.Font.Code
+    TitleLabel.TextSize = 13
+    TitleLabel.Parent = Window
+
+    Content.Size = UDim2.new(1, -14, 1, -40)
+    Content.Position = UDim2.new(0, 7, 0, 35)
+    Content.BackgroundTransparency = 1
+    Content.ScrollBarThickness = 2
+    Content.Parent = Window
+    
+    UIListLayout.Parent = Content
+    UIListLayout.Padding = UDim.new(0, 8)
+
+    local Methods = {}
+
+    -- ARSIN BUTTON
+    function Methods:Button(text, callback)
+        local Btn = Instance.new("TextButton")
+        Btn.Size = UDim2.new(1, -5, 0, 32)
+        Btn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+        Btn.Text = "> " .. text
+        Btn.Font = Enum.Font.Code
+        Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        Btn.TextSize = 14
+        Btn.BorderSizePixel = 0
+        Btn.Parent = Content
+        
+        local S = Instance.new("UIStroke")
+        S.Color = Color3.fromRGB(40, 40, 50)
+        S.Parent = Btn
+
+        Btn.MouseButton1Click:Connect(callback)
+        Btn.MouseEnter:Connect(function()
+            TweenService:Create(S, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 150, 255)}):Play()
+            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+        Btn.MouseLeave:Connect(function()
+            TweenService:Create(S, TweenInfo.new(0.2), {Color = Color3.fromRGB(40, 40, 50)}):Play()
+            Btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+        end)
+    end
+
+    -- ARSIN TOGGLE
+    function Methods:Toggle(text, default, callback)
+        local state = default
+        local Tgl = Instance.new("TextButton")
+        Tgl.Size = UDim2.new(1, -5, 0, 32)
+        Tgl.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+        Tgl.Text = text .. (state and " [ON]" or " [OFF]")
+        Tgl.Font = Enum.Font.Code
+        Tgl.TextColor3 = state and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 100, 100)
+        Tgl.Parent = Content
+        
+        Tgl.MouseButton1Click:Connect(function()
+            state = not state
+            Tgl.Text = text .. (state and " [ON]" or " [OFF]")
+            Tgl.TextColor3 = state and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 100, 100)
+            callback(state)
+        end)
+    end
+
+    return Methods
+end
+
+return ARSIN

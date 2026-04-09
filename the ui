@@ -1,163 +1,99 @@
--- [[ ARSIN UI LIBRARY | CORE SOURCE ]] --
+
+ ________  ________  ________  ___  ________           ___  ___  ___          ___       ___  ________     
+|\   __  \|\   __  \|\   ____\|\  \|\   ___  \        |\  \|\  \|\  \        |\  \     |\  \|\   __  \    
+\ \  \|\  \ \  \|\  \ \  \___|\ \  \ \  \\ \  \       \ \  \\\  \ \  \       \ \  \    \ \  \ \  \|\ /_   
+ \ \   __  \ \   _  _\ \_____  \ \  \ \  \\ \  \       \ \  \\\  \ \  \       \ \  \    \ \  \ \   __  \  
+  \ \  \ \  \ \  \\  \\|____|\  \ \  \ \  \\ \  \       \ \  \\\  \ \  \       \ \  \____\ \  \ \  \|\  \ 
+   \ \__\ \__\ \__\\ _\ ____\_\  \ \__\ \__\\ \__\       \ \_______\ \__\       \ \_______\ \__\ \_______\
+    \|__|\|__|\|__|\|__|\_________\|__|\|__| \|__|        \|_______|\|__|        \|_______|\|__|\|_______|
+                       \|_________|                                                                       
+                                                                                                          
+                                                                                                          
+
 local ARSIN = {}
 ARSIN.__index = ARSIN
 
-local CoreGui = game:GetService("CoreGui")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 
--- Utility: Smooth Dragging Handler
-local function MakeDraggable(gui)
-    local dragging, dragInput, dragStart, startPos
-    gui.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = gui.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
-            end)
-        end
-    end)
-    gui.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
-    end)
-    RunService.RenderStepped:Connect(function()
-        if dragging and dragInput then
-            local delta = dragInput.Position - dragStart
-            gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-end
+game:GetService("LogService").MessageOut:Connect(function()
+    -- This doesn't stop the errors, but it stops them from freezing your UI thread
+    collectgarbage("step", 1) 
+end)
 
 function ARSIN.new()
     local self = setmetatable({}, ARSIN)
+    
+    if PlayerGui:FindFirstChild("ARSIN_CORE") then 
+        PlayerGui.ARSIN_CORE:Destroy() 
+    end
+
     self.Screen = Instance.new("ScreenGui")
-    self.Screen.Name = "ARSIN_" .. math.random(100, 999)
-    self.Screen.ResetOnSpawn = false
-    self.Screen.Parent = CoreGui
+    self.Screen.Name = "ARSIN_CORE"
+    self.Screen.Parent = PlayerGui -- Use PlayerGui for better stability during lag
+    self.Screen.DisplayOrder = 99999
+    self.Screen.IgnoreGuiInset = true
+    
     return self
 end
 
 function ARSIN:Window(title, size)
-    size = size or Vector2.new(300, 400)
+    size = size or Vector2.new(300, 350)
     
-    local MainFrame = Instance.new("Frame")
-    local UIStroke = Instance.new("UIStroke")
-    local TitleBar = Instance.new("Frame")
-    local TitleLabel = Instance.new("TextLabel")
-    local Container = Instance.new("ScrollingFrame")
-    local Layout = Instance.new("UIListLayout")
-    local Padding = Instance.new("UIPadding")
+    local Main = Instance.new("Frame")
+    Main.Size = UDim2.fromOffset(size.X, size.Y)
+    Main.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
+    Main.BackgroundColor3 = Color3.fromRGB(5, 5, 7)
+    Main.BorderSizePixel = 0
+    Main.Active = true
+    Main.Draggable = true
+    Main.Parent = self.Screen
 
-    -- Main Window Styling
-    MainFrame.Name = "Main"
-    MainFrame.Size = UDim2.fromOffset(size.X, size.Y)
-    MainFrame.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 10)
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Parent = self.Screen
-    MakeDraggable(MainFrame)
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Thickness = 2
+    Stroke.Color = Color3.fromRGB(0, 170, 255)
+    Stroke.Parent = Main
 
-    UIStroke.Color = Color3.fromRGB(0, 160, 255)
-    UIStroke.Thickness = 1.6
-    UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    UIStroke.Parent = MainFrame
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, 0, 0, 30)
+    Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+    Title.Text = "  ARSIN // " .. title:upper()
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.Code
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Main
 
-    TitleBar.Size = UDim2.new(1, 0, 0, 30)
-    TitleBar.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
-    TitleBar.BorderSizePixel = 0
-    TitleBar.Parent = MainFrame
+    local Content = Instance.new("ScrollingFrame")
+    Content.Size = UDim2.new(1, -10, 1, -40)
+    Content.Position = UDim2.new(0, 5, 0, 35)
+    Content.BackgroundTransparency = 1
+    Content.CanvasSize = UDim2.new(0,0,0,0)
+    Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Content.ScrollBarThickness = 0
+    Content.Parent = Main
 
-    TitleLabel.Size = UDim2.new(1, -10, 1, 0)
-    TitleLabel.Position = UDim2.fromOffset(10, 0)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = "[ ARSIN ] // " .. tostring(title):upper()
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.Font = Enum.Font.Code
-    TitleLabel.TextSize = 13
-    TitleLabel.Parent = TitleBar
+    local List = Instance.new("UIListLayout")
+    List.Padding = UDim.new(0, 5)
+    List.Parent = Content
 
-    Container.Name = "Container"
-    Container.Size = UDim2.new(1, 0, 1, -30)
-    Container.Position = UDim2.fromOffset(0, 30)
-    Container.BackgroundTransparency = 1
-    Container.ScrollBarThickness = 1
-    Container.ScrollBarImageColor3 = Color3.fromRGB(0, 160, 255)
-    Container.Parent = MainFrame
-
-    Layout.Parent = Container
-    Layout.Padding = UDim.new(0, 6)
-    Layout.SortOrder = Enum.SortOrder.LayoutOrder
-
-    Padding.PaddingLeft = UDim.new(0, 8)
-    Padding.PaddingRight = UDim.new(0, 8)
-    Padding.PaddingTop = UDim.new(0, 8)
-    Padding.Parent = Container
-
-    local Actions = {}
-
-    -- Element: Button
-    function Actions:Button(text, callback)
-        local Btn = Instance.new("TextButton")
-        local BStroke = Instance.new("UIStroke")
-        
-        Btn.Size = UDim2.new(1, 0, 0, 32)
-        Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-        Btn.BorderSizePixel = 0
-        Btn.Font = Enum.Font.Code
-        Btn.Text = "> " .. text
-        Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        Btn.TextSize = 14
-        Btn.Parent = Container
-
-        BStroke.Color = Color3.fromRGB(30, 30, 35)
-        BStroke.Parent = Btn
-
-        Btn.MouseButton1Click:Connect(callback)
-        Btn.MouseEnter:Connect(function()
-            TweenService:Create(BStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 160, 255)}):Play()
-            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        end)
-        Btn.MouseLeave:Connect(function()
-            TweenService:Create(BStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(30, 30, 35)}):Play()
-            Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
-        end)
+    local Methods = {}
+    function Methods:Button(txt, cb)
+        local B = Instance.new("TextButton")
+        B.Size = UDim2.new(1, 0, 0, 30)
+        B.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+        B.Text = "> " .. txt
+        B.Font = Enum.Font.Code
+        B.TextColor3 = Color3.fromRGB(200, 200, 200)
+        B.Parent = Content
+        B.MouseButton1Click:Connect(cb)
     end
-
-    -- Element: Toggle
-    function Actions:Toggle(text, default, callback)
-        local enabled = default or false
-        local Tgl = Instance.new("TextButton")
-        local TStroke = Instance.new("UIStroke")
-
-        Tgl.Size = UDim2.new(1, 0, 0, 32)
-        Tgl.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-        Tgl.BorderSizePixel = 0
-        Tgl.Font = Enum.Font.Code
-        Tgl.Text = text .. (enabled and " [ ACTIVE ]" or " [ INACTIVE ]")
-        Tgl.TextColor3 = enabled and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 70, 70)
-        Tgl.Parent = Container
-
-        TStroke.Color = Color3.fromRGB(30, 30, 35)
-        TStroke.Parent = Tgl
-
-        Tgl.MouseButton1Click:Connect(function()
-            enabled = not enabled
-            Tgl.Text = text .. (enabled and " [ ACTIVE ]" or " [ INACTIVE ]")
-            Tgl.TextColor3 = enabled and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 70, 70)
-            callback(enabled)
-        end)
-    end
-
-    return Actions
+    
+    return Methods
 end
 
-function ARSIN:Notify(title, text)
-    print("[ARSIN NOTIFY]: " .. title .. " - " .. text)
-    -- You can expand this to create a UI notification frame later
-end
+return ARSIN
+
 
 return ARSIN

@@ -15,11 +15,6 @@ ARSIN.__index = ARSIN
 local Players = game:GetService("Players")
 local LP = Players.LocalPlayer
 local PlayerGui = LP:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
-
-game:GetService("LogService").MessageOut:Connect(function()
-    collectgarbage("step", 1) 
-end)
 
 function ARSIN.new()
     local self = setmetatable({}, ARSIN)
@@ -41,6 +36,7 @@ function ARSIN:Window(title, size)
     size = size or Vector2.new(300, 350)
     
     local Main = Instance.new("Frame")
+    Main.Name = "MainFrame"
     Main.Size = UDim2.fromOffset(size.X, size.Y)
     Main.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
     Main.BackgroundColor3 = Color3.fromRGB(5, 5, 7)

@@ -1,4 +1,4 @@
-
+--[[
  ________  ________  ________  ___  ________           ___  ___  ___          ___       ___  ________     
 |\   __  \|\   __  \|\   ____\|\  \|\   ___  \        |\  \|\  \|\  \        |\  \     |\  \|\   __  \    
 \ \  \|\  \ \  \|\  \ \  \___|\ \  \ \  \\ \  \       \ \  \\\  \ \  \       \ \  \    \ \  \ \  \|\ /_   
@@ -7,8 +7,7 @@
    \ \__\ \__\ \__\\ _\ ____\_\  \ \__\ \__\\ \__\       \ \_______\ \__\       \ \_______\ \__\ \_______\
     \|__|\|__|\|__|\|__|\_________\|__|\|__| \|__|        \|_______|\|__|        \|_______|\|__|\|_______|
                        \|_________|                                                                       
-                                                                                                          
-                                                                                                          
+]]--
 
 local ARSIN = {}
 ARSIN.__index = ARSIN
@@ -19,7 +18,6 @@ local PlayerGui = LP:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 
 game:GetService("LogService").MessageOut:Connect(function()
-    -- This doesn't stop the errors, but it stops them from freezing your UI thread
     collectgarbage("step", 1) 
 end)
 
@@ -32,7 +30,7 @@ function ARSIN.new()
 
     self.Screen = Instance.new("ScreenGui")
     self.Screen.Name = "ARSIN_CORE"
-    self.Screen.Parent = PlayerGui -- Use PlayerGui for better stability during lag
+    self.Screen.Parent = PlayerGui
     self.Screen.DisplayOrder = 99999
     self.Screen.IgnoreGuiInset = true
     
@@ -59,7 +57,7 @@ function ARSIN:Window(title, size)
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(1, 0, 0, 30)
     Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-    Title.Text = "  ARSIN // " .. title:upper()
+    Title.Text = "  ARSIN // " .. tostring(title):upper()
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.Font = Enum.Font.Code
     Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -92,8 +90,5 @@ function ARSIN:Window(title, size)
     
     return Methods
 end
-
-return ARSIN
-
 
 return ARSIN

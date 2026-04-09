@@ -9,95 +9,6 @@ ________  ________  ________  ___  ________           ___  ___  ___          ___
                        \|_________|                                                                       
  ]--                                                                                                       
                                                                                                           
-
-local ARSIN = {}
-ARSIN.__index = ARSIN
-
-local Players = game:GetService("Players")
-local LP = Players.LocalPlayer
-local PlayerGui = LP:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
-
-game:GetService("LogService").MessageOut:Connect(function()
-    -- This doesn't stop the errors, but it stops them from freezing your UI thread
-    collectgarbage("step", 1) 
-end)
-
-function ARSIN.new()
-    local self = setmetatable({}, ARSIN)
-    
-    if PlayerGui:FindFirstChild("ARSIN_CORE") then 
-        PlayerGui.ARSIN_CORE:Destroy() 
-    end
-
-    self.Screen = Instance.new("ScreenGui")
-    self.Screen.Name = "ARSIN_CORE"
-    self.Screen.Parent = PlayerGui -- Use PlayerGui for better stability during lag
-    self.Screen.DisplayOrder = 99999
-    self.Screen.IgnoreGuiInset = true
-    
-    return self
-end
-
-function ARSIN:Window(title, size)
-    size = size or Vector2.new(300, 350)
-    
-    local Main = Instance.new("Frame")
-    Main.Size = UDim2.fromOffset(size.X, size.Y)
-    Main.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
-    Main.BackgroundColor3 = Color3.fromRGB(5, 5, 7)
-    Main.BorderSizePixel = 0
-    Main.Active = true
-    Main.Draggable = true
-    Main.Parent = self.Screen
-
-    local Stroke = Instance.new("UIStroke")
-    Stroke.Thickness = 2
-    Stroke.Color = Color3.fromRGB(0, 170, 255)
-    Stroke.Parent = Main
-
-    local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, 0, 0, 30)
-    Title.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-    Title.Text = "  ARSIN // " .. title:upper()
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.Font = Enum.Font.Code
-    Title.TextXAlignment = Enum.TextXAlignment.Left
-    Title.Parent = Main
-
-    local Content = Instance.new("ScrollingFrame")
-    Content.Size = UDim2.new(1, -10, 1, -40)
-    Content.Position = UDim2.new(0, 5, 0, 35)
-    Content.BackgroundTransparency = 1
-    Content.CanvasSize = UDim2.new(0,0,0,0)
-    Content.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    Content.ScrollBarThickness = 0
-    Content.Parent = Main
-
-    local List = Instance.new("UIListLayout")
-    List.Padding = UDim.new(0, 5)
-    List.Parent = Content
-
-    local Methods = {}
-    function Methods:Button(txt, cb)
-        local B = Instance.new("TextButton")
-        B.Size = UDim2.new(1, 0, 0, 30)
-        B.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-        B.Text = "> " .. txt
-        B.Font = Enum.Font.Code
-        B.TextColor3 = Color3.fromRGB(200, 200, 200)
-        B.Parent = Content
-        B.MouseButton1Click:Connect(cb)
-    end
-    
-    return Methods
-end
-
-return ARSIN
-
-
-return ARSIN
-
 local ARSIN = {}
 ARSIN.__index = ARSIN
 
@@ -115,17 +26,12 @@ end
 
 function ARSIN:Window(title, size)
     size = size or Vector2.new(580, 420)
-    
     local Main = Instance.new("Frame", self.Screen)
-    Main.Size = UDim2.fromOffset(0, 0) -- For opening animation
-    Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Main.Size = UDim2.fromOffset(size.X, size.Y)
+    Main.Position = UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2)
     Main.BackgroundColor3 = Color3.fromRGB(5, 5, 8)
-    Main.ClipsDescendants = true
     Main.Active = true
     Main.Draggable = true
-
-    Main:TweenSizeAndPosition(UDim2.fromOffset(size.X, size.Y), UDim2.new(0.5, -size.X/2, 0.5, -size.Y/2), "Out", "Back", 0.5, true)
-
     Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
     
     local Stroke = Instance.new("UIStroke", Main)
@@ -134,88 +40,56 @@ function ARSIN:Window(title, size)
         Stroke.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
     end)
 
-    -- Glassmorphism Background Highlight
-    local Blur = Instance.new("Frame", Main)
-    Blur.Size = UDim2.new(1, 0, 0, 50)
-    Blur.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Blur.BackgroundTransparency = 0.95
-    Blur.BorderSizePixel = 0
-
-    local Header = Instance.new("TextLabel", Main)
-    Header.Size = UDim2.new(1, -120, 0, 40)
-    Header.Position = UDim2.fromOffset(15, 5)
-    Header.Text = "⚡ " .. title:upper()
-    Header.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Header.Font = Enum.Font.GothamBold
-    Header.TextSize = 16
-    Header.TextXAlignment = Enum.TextXAlignment.Left
-    Header.BackgroundTransparency = 1
-
     local Sidebar = Instance.new("ScrollingFrame", Main)
-    Sidebar.Size = UDim2.new(0, 110, 1, -70)
-    Sidebar.Position = UDim2.new(1, -120, 0, 55)
-    Sidebar.BackgroundTransparency = 1
-    Sidebar.ScrollBarThickness = 0
+    Sidebar.Size = UDim2.new(0, 110, 1, -70); Sidebar.Position = UDim2.new(1, -120, 0, 55)
+    Sidebar.BackgroundTransparency = 1; Sidebar.ScrollBarThickness = 0
     Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 10)
 
     local Container = Instance.new("Frame", Main)
-    Container.Size = UDim2.new(1, -150, 1, -70)
-    Container.Position = UDim2.fromOffset(15, 55)
-    Container.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
-    Instance.new("UICorner", Container)
-    Instance.new("UIStroke", Container).Color = Color3.fromRGB(30, 30, 35)
+    Container.Size = UDim2.new(1, -150, 1, -70); Container.Position = UDim2.fromOffset(15, 55)
+    Container.BackgroundColor3 = Color3.fromRGB(12, 12, 15); Instance.new("UICorner", Container)
 
     local Pages = {}
     local Methods = {}
 
     function Methods:Tab(name)
         local Page = Instance.new("ScrollingFrame", Container)
-        Page.Size = UDim2.new(1, -10, 1, -50)
-        Page.Position = UDim2.fromOffset(5, 45)
+        Page.Size = UDim2.new(1, -10, 1, -50); Page.Position = UDim2.fromOffset(5, 45)
         Page.Visible = false; Page.BackgroundTransparency = 1; Page.ScrollBarThickness = 0
         Instance.new("UIListLayout", Page).Padding = UDim.new(0, 10)
 
         local TabBtn = Instance.new("TextButton", Sidebar)
-        TabBtn.Size = UDim2.new(1, 0, 0, 38)
-        TabBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-        TabBtn.Text = name:upper()
-        TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
-        TabBtn.Font = Enum.Font.GothamBold
-        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(1, 0)
-        local TStroke = Instance.new("UIStroke", TabBtn); TStroke.Color = Color3.fromRGB(40, 40, 45)
-
+        TabBtn.Size = UDim2.new(1, 0, 0, 38); TabBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+        TabBtn.Text = name:upper(); TabBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
+        TabBtn.Font = Enum.Font.GothamBold; Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(1, 0)
+        
         local PageHeader = Instance.new("TextLabel", Container)
         PageHeader.Size = UDim2.new(1, -20, 0, 40); PageHeader.Position = UDim2.fromOffset(10, 5)
-        PageHeader.Text = "» " .. name:upper(); PageHeader.TextColor3 = Color3.fromRGB(255, 255, 255)
-        PageHeader.Font = Enum.Font.GothamBold; PageHeader.TextSize = 24; PageHeader.BackgroundTransparency = 1; PageHeader.Visible = false; PageHeader.TextXAlignment = 0
+        PageHeader.Text = name:upper(); PageHeader.TextColor3 = Color3.fromRGB(255, 255, 255)
+        PageHeader.Font = Enum.Font.GothamBold; PageHeader.TextSize = 24; PageHeader.BackgroundTransparency = 1; PageHeader.Visible = false
 
         TabBtn.MouseButton1Click:Connect(function()
-            for _, v in pairs(Pages) do v.p.Visible = false v.h.Visible = false v.b.TextColor3 = Color3.fromRGB(150, 150, 150) v.s.Color = Color3.fromRGB(40, 40, 45) end
-            Page.Visible = true; PageHeader.Visible = true; TabBtn.TextColor3 = Color3.fromRGB(0, 255, 255); TStroke.Color = Color3.fromRGB(0, 255, 255)
+            for _, v in pairs(Pages) do v.p.Visible = false v.h.Visible = false end
+            Page.Visible = true; PageHeader.Visible = true
         end)
 
-        Pages[name] = {p = Page, h = PageHeader, b = TabBtn, s = TStroke}
-        if #Sidebar:GetChildren() == 2 then Page.Visible = true; PageHeader.Visible = true; TabBtn.TextColor3 = Color3.fromRGB(0, 255, 255); TStroke.Color = Color3.fromRGB(0, 255, 255) end
+        Pages[name] = {p = Page, h = PageHeader}
+        if #Sidebar:GetChildren() == 2 then Page.Visible = true; PageHeader.Visible = true end
 
         local PageMethods = {}
         function PageMethods:Button(txt, cb)
             local b = Instance.new("TextButton", Page)
-            b.Size, b.BackgroundColor3 = UDim2.new(1, 0, 0, 40), Color3.fromRGB(25, 25, 30)
-            b.Text, b.TextColor3, b.Font = "  > " .. txt:upper(), Color3.fromRGB(200, 200, 200), Enum.Font.Code
-            b.TextXAlignment = 0; Instance.new("UICorner", b)
-            Instance.new("UIStroke", b).Color = Color3.fromRGB(45, 45, 50)
-            b.MouseButton1Click:Connect(cb)
+            b.Size = UDim2.new(1, 0, 0, 40); b.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+            b.Text = txt; b.TextColor3 = Color3.fromRGB(255, 255, 255); b.Font = Enum.Font.Code
+            Instance.new("UICorner", b); b.MouseButton1Click:Connect(cb)
         end
-        
         function PageMethods:Label(txt)
             local l = Instance.new("TextLabel", Page)
-            l.Size, l.BackgroundTransparency = UDim2.new(1, 0, 0, 20), 1
-            l.Text, l.TextColor3, l.Font = txt, Color3.fromRGB(100, 100, 110), Enum.Font.Gotham
-            l.TextSize, l.TextXAlignment = 12, 0
+            l.Size = UDim2.new(1, 0, 0, 20); l.Text = txt; l.TextColor3 = Color3.fromRGB(255, 255, 255); l.BackgroundTransparency = 1
         end
-
         return PageMethods
     end
     return Methods
 end
+
 return ARSIN
